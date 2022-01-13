@@ -23,6 +23,7 @@ function uploadFile(file) {
      Bucket: bucketName,
      Body: fileStream,
      Key: "Airplane.jpg"
+     // not sure if we want this to be post-id to pull with
  }
     console.log('preparing to send to AWS')
     console.log(uploadParams)
@@ -33,3 +34,12 @@ exports.uploadFile = uploadFile
 
 
 // downloads a file from AWS s3
+
+function getFileStream(fileKey) {
+    const downloadParams = {
+        Key: fileKey,
+        Bucket: bucketName
+    }
+    return s3.getObject(downloadParams).createReadStream()
+}
+ exports.getFileStream = getFileStream

@@ -1,7 +1,10 @@
 
   const express = require('express')
+  const fs = require('fs')
+  const util = require('util')
+  const unlinkFile = util.promisify(fs.unlink)
   const multer  = require('multer')
-  const { uploadFile } = require('./s3')
+  const { uploadFile, getFileStream} = require('./s3')
 
   var port = 3001;
   
@@ -20,7 +23,17 @@
   
   app.use(express.static(__dirname + '/public'));
   app.use('/uploads', express.static('uploads'));
-  
+
+//  pulls the image from AWS- think we should use post id as the key???
+
+app.get('/images/:key',(req, res) => {
+   const key = req.params.key 
+    const readStream = getFileStream(key)
+
+    readStream.pipe(res)
+})
+
+// add asyncs and awaits
   app.post('/profile-upload-single', upload.single('profile-file'), (req,res) => {
     // req.file is the `profile-file` file
     // req.body will hold the other blog post fields
@@ -29,6 +42,8 @@
     response += "Files uploaded successfully.<br>"
     response += `<img src="${req.file.path}" /><br>`
     uploadFile(req.file.path)
+   // deletes the local file
+    // unlinkFile(req.file.path)
     return res.send(response)
   })
   
