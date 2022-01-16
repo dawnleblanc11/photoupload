@@ -22,7 +22,7 @@ function uploadFile(file) {
  const uploadParams = {
      Bucket: bucketName,
      Body: fileStream,
-     Key: "Airplane.jpg"
+     Key: file,
      // not sure if we want this to be post-id to pull with
  }
     console.log('preparing to send to AWS')
